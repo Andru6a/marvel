@@ -1,157 +1,143 @@
-import { Component } from "react";
-import PropTypes from "prop-types";
+import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
-import MarvelService from "../../services/MarvelService";
-import ErrorMesage from "../errorMessage/ErrorMessage";
-import Spinner from "../spinner/Spinner";
+import useMarvelService from '../../services/MarvelService';
+import ErrorMesage from '../errorMessage/ErrorMessage';
+import Spinner from '../spinner/Spinner';
 
-import "./charList.scss";
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import './charList.scss';
 
-class CharList extends Component {
-  state = {
-    charList: [],
-    loading: true,
-    error: false,
-    newItemLoading: false,
-    offset: 210,
-    charEnded: false,
+const CharList = (props) => {
+  const [charList, setCharList] = useState([]);
+  const [newItemLoading, setNewItemLoading] = useState(false);
+  const [offset, setOffset] = useState(210);
+  const [charEnded, setCharEnded] = useState(false);
+
+  const { loading, error, getAllCharacters } = useMarvelService();
+
+  useEffect(() => {
+    onRequest(offset, true);
+    // window.addEventListener('scroll', onScroll);
+    return () => {
+      // window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (newItemLoading && !loading) {
+      onRequest(offset);
+    }
+  }, [newItemLoading]);
+
+  const onRequest = (offset, initial) => {
+    initial ? setNewItemLoading(false) : setNewItemLoading(true);
+    getAllCharacters(offset)
+      .then(onCharsLoaded)
+      .finally(() => setNewItemLoading(false));
   };
 
-  marvelService = new MarvelService();
-
-  componentDidMount() {
-    window.addEventListener("scroll", this.onScroll);
-    this.onRequest();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.onScroll);
-  }
-
-  onRequest = (offset) => {
-    this.onCharListLoading();
-    this.marvelService
-      .getAllCharacters(offset)
-      .then(this.onCharsLoaded)
-      .catch(this.onError);
-  };
-
-  onCharListLoading = () => {
-    this.setState({
-      newItemLoading: true,
-    });
-  };
-
-  onCharsLoaded = (newCharList) => {
+  const onCharsLoaded = (newCharList) => {
     let ended = false;
     if (newCharList.length < 9) {
       ended = true;
     }
 
-    this.setState(({ charList, offset }) => ({
-      charList: [...charList, ...newCharList],
-      loading: false,
-      newItemLoading: false,
-      offset: offset + 9,
-      charEnded: ended,
-    }));
+    const addChar = (index) => {
+      if (index < newCharList.length) {
+        setCharList((charList) => [...charList, newCharList[index]]);
+        setTimeout(() => addChar(index + 1), 100);
+      } else {
+        setOffset((offset) => offset + newCharList.length);
+        setCharEnded(ended);
+      }
+    };
+    addChar(0);
   };
 
-  onError = () => {
-    this.setState({
-      loading: false,
-      error: true,
-    });
-  };
+  // const onScroll = () => {
+  //   if (newItemLoading) return;
+  //   if (charEnded) {
+  //     window.removeEventListener('scoll', onScroll);
+  //   }
+  //   if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+  //     // onCharListLoading();
+  //     setNewItemLoading(true);
+  //   }
+  // };
 
-  onScroll = () => {
-    if (this.state.newItemLoading) return;
-    if (this.state.charEnded) {
-      window.removeEventListener("scoll", this.onScroll);
-    }
+  const itemRefs = useRef([]);
 
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-      this.onCharListLoading();
-      this.onRequest(this.state.offset);
-    }
-  };
-
-  itemRefs = [];
-
-  setRefs = ref => {
-    this.itemRefs.push(ref)
-  }
-
-  focusOnItem = (id) => {
-    this.itemRefs.forEach(item => {
+  const focusOnItem = (id) => {
+    itemRefs.current.forEach((item) => {
       item.classList.remove('char__item_selected');
-    })
-    this.itemRefs[id].classList.add('char__item_selected');
-    this.itemRefs[id].focus();
-  } 
+    });
+    itemRefs.current[id].classList.add('char__item_selected');
+    itemRefs.current[id].focus();
+  };
 
-  renderItems(arr) {
+  function renderItems(arr) {
     const items = arr.map((item, i) => {
-      let imgStyle = { objectFit: "cover" };
+      let imgStyle = { objectFit: 'cover' };
       if (
         item.thumbnail ===
-        "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
+        'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
       ) {
-        imgStyle = { objectFit: "unset" };
+        imgStyle = { objectFit: 'unset' };
       }
 
       return (
-        <li
-          className="char__item"
-          key={item.id}
-          ref={this.setRefs}
-          onClick={() => {
-            this.props.onCharSelected(item.id);
-            this.focusOnItem(i);
-          }}
-          onKeyDown={(e) => {
-            if(e.key === ' ' || e.key === 'Enter'){
-              this.props.onCharSelected(item.id);
-              this.focusOnItem(i);
-            }
-          }}
-          tabIndex={0}
-        >
-          <img src={item.thumbnail} alt={item.name} style={imgStyle} />
-          <div className="char__name">{item.name}</div>
-        </li>
+        <CSSTransition timeout={500} classNames="char__item" key={item.id}>
+          <li
+            className="char__item"
+            key={item.id}
+            ref={(el) => (itemRefs.current[i] = el)}
+            onClick={() => {
+              props.onCharSelected(item.id);
+              focusOnItem(i);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                props.onCharSelected(item.id);
+                focusOnItem(i);
+              }
+            }}
+            tabIndex={0}
+          >
+            <img src={item.thumbnail} alt={item.name} style={imgStyle} />
+            <div className="char__name">{item.name}</div>
+          </li>
+        </CSSTransition>
       );
     });
-    return <ul className="char__grid">{items}</ul>;
-  }
-
-  render() {
-    const { charList, loading, error, newItemLoading, offset, charEnded } =
-      this.state;
-
-    const items = this.renderItems(charList);
-
-    const errorMessage = error ? <ErrorMesage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? items : null;
-
     return (
-      <div className="char__list">
-        {errorMessage}
-        {spinner}
-        {content}
-        <button
-          className="button button__main button__long"
-          disabled={newItemLoading}
-          style={{ display: charEnded ? "none" : "block" }}
-          onClick={() => this.onRequest(offset)}
-        >
-          <div className="inner">load more</div>
-        </button>
-      </div>
+      <TransitionGroup component={'ul'} className="char__grid">
+        {items}
+      </TransitionGroup>
     );
   }
-}
+
+  const items = renderItems(charList);
+
+  const errorMessage = error ? <ErrorMesage /> : null;
+  const spinner = loading && !newItemLoading ? <Spinner /> : null;
+
+  return (
+    <div className="char__list">
+      {errorMessage}
+      {spinner}
+      {items}
+      <button
+        className="button button__main button__long"
+        disabled={newItemLoading}
+        style={{ display: charEnded ? 'none' : 'block' }}
+        onClick={() => setNewItemLoading(true)}
+      >
+        <div className="inner">load more</div>
+      </button>
+    </div>
+  );
+};
 
 CharList.propTypes = {
   onCharSelected: PropTypes.func.isRequired,
