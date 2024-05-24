@@ -92,7 +92,7 @@ const View = ({ char }) => {
           if (i > 9) return;
           return (
             <li key={i} className="char__comics-item">
-              <a href={`/comics/${comicUrl}`}>{item.name}</a>
+              <a href={`/marvel/comics/${comicUrl}`}>{item.name}</a>
             </li>
           );
         })}
