@@ -10,8 +10,9 @@ import "./charInfo.scss";
 
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const {loading, error, getCharacter, clearError} = useMarvelService();
+  const { error, getCharacter, clearError } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -19,10 +20,11 @@ const CharInfo = (props) => {
 
   useEffect(() => {
     updateChar();
-  }, [props]);
+  }, [props.charId]);
 
   const onCharLoaded = (char) => {
     setChar(char);
+    setLoading(false);
   };
 
   const updateChar = () => {
@@ -30,7 +32,7 @@ const CharInfo = (props) => {
     if (!charId) {
       return;
     }
-    
+    setLoading(true);
     clearError();
     getCharacter(charId).then(onCharLoaded);
   };
@@ -85,11 +87,12 @@ const View = ({ char }) => {
       <ul className="char__comics-list">
         {comics.length > 0 ? null : "Comics not found"}
         {comics.map((item, i) => {
+          const comicUrl = item.resourceURI.slice(-5);
           // eslint-disable-next-line
           if (i > 9) return;
           return (
             <li key={i} className="char__comics-item">
-              {item.name}
+              <a href={`/comics/${comicUrl}`}>{item.name}</a>
             </li>
           );
         })}
