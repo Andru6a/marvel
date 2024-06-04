@@ -1,4 +1,4 @@
-import ErrorMesage from "../errorMessage/ErrorMessage";
+import ErrorMessage from "../errorMessage/ErrorMessage";
 import { Link, useNavigate } from "react-router-dom";
 
 const Page404 = () => {
@@ -21,7 +21,7 @@ const Page404 = () => {
       >
         Go back
       </Link>
-      <ErrorMesage />
+      <ErrorMessage />
     </div>
   );
 };

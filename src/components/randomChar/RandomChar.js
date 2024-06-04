@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Spinner from "../spinner/Spinner";
-import ErrorMesage from "../errorMessage/ErrorMessage";
+import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelService from "../../services/MarvelService";
 
 import "./randomChar.scss";
@@ -25,7 +25,7 @@ const RandomChar = () => {
     getCharacter(id).then(onCharLoaded);
   };
 
-  const errorMessage = error ? <ErrorMesage /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading ? <Spinner /> : null;
   const content = !(loading || error) ? <View char={char} /> : null;
 

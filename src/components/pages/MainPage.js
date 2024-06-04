@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet';
 
-import RandomChar from "../randomChar/RandomChar";
-import CharList from "../charList/CharList";
-import CharInfo from "../charInfo/CharInfo";
-import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-
+import RandomChar from '../randomChar/RandomChar';
+import CharList from '../charList/CharList';
+import CharInfo from '../charInfo/CharInfo';
+import CharFind from '../charFind/CharFind';
+import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
 const MainPage = () => {
   const [selecedChar, setChar] = useState(null);
@@ -15,6 +16,10 @@ const MainPage = () => {
 
   return (
     <>
+      <Helmet>
+        <meta name="description" content="Marvel information portal" />
+        <title>Marvel information portal</title>
+      </Helmet>
       <ErrorBoundary>
         <RandomChar />
       </ErrorBoundary>
@@ -22,9 +27,14 @@ const MainPage = () => {
         <ErrorBoundary>
           <CharList onCharSelected={onCharSelected} />
         </ErrorBoundary>
-        <ErrorBoundary>
-          <CharInfo charId={selecedChar} />
-        </ErrorBoundary>
+        <div className="sticky">
+          <ErrorBoundary>
+            <CharInfo charId={selecedChar} />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <CharFind />
+          </ErrorBoundary>
+        </div>
       </div>
     </>
   );

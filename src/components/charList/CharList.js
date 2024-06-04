@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelService';
-import ErrorMesage from '../errorMessage/ErrorMessage';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -119,7 +119,7 @@ const CharList = (props) => {
 
   const items = renderItems(charList);
 
-  const errorMessage = error ? <ErrorMesage /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading && !newItemLoading ? <Spinner /> : null;
 
   return (

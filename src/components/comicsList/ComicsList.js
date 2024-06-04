@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
-import ErrorMesage from '../errorMessage/ErrorMessage';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -79,7 +79,7 @@ const ComicsList = (props) => {
     );
   }
 
-  const errorMessage = error ? <ErrorMesage /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading && !newItemLoading ? <Spinner /> : null;
   const items = renderItems(comicsList);
   return (
