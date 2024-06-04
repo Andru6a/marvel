@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import useMarvelService from "../../services/MarvelService";
 import Spinner from "../spinner/Spinner";
-import ErrorMesage from "../errorMessage/ErrorMessage";
+import ErrorMessage from "../errorMessage/ErrorMessage";
 import Skeleton from "../skeleton/Skeleton";
 
 import "./charInfo.scss";
@@ -38,7 +38,7 @@ const CharInfo = (props) => {
   };
 
   const skeleton = char || loading || error ? null : <Skeleton />;
-  const errorMessage = error ? <ErrorMesage /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading ? <Spinner /> : null;
   const content = !(loading || error || !char) ? <View char={char} /> : null;
 

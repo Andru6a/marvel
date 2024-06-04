@@ -19,7 +19,16 @@ const useMarvelService = () => {
     return _transformCharacter(res.data.results[0]);
   };
 
+  const getCharacterByName = async (name) => {
+    const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+    return _transformCharacter(res.data.results[0]);
+  }
+
   const _transformCharacter = (char) => {
+    if(!char) {
+      const error = 'The character was not found. Check the name and try again'
+      return error;
+    }
     return {
       id: char.id,
       name: char.name,
@@ -71,6 +80,7 @@ const useMarvelService = () => {
     clearError,
     getAllComics,
     getComic,
+    getCharacterByName,
   };
 };
 
