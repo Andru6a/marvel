@@ -1,9 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import './singleCharacterLayout.scss';
 
 const SingleComicPage = ({ data }) => {
-  const navigate = useNavigate();
   const { name, description, thumbnail } = data;
 
   return (

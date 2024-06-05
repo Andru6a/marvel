@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import RandomChar from '../randomChar/RandomChar';
 import CharList from '../charList/CharList';
 import CharInfo from '../charInfo/CharInfo';
-import CharFind from '../charFind/CharFind';
+import CharSearchForm from '../charSearchForm/CharSearchForm'
 import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
 const MainPage = () => {
@@ -32,7 +32,7 @@ const MainPage = () => {
             <CharInfo charId={selecedChar} />
           </ErrorBoundary>
           <ErrorBoundary>
-            <CharFind />
+            <CharSearchForm />
           </ErrorBoundary>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import "./style/style.scss";
 
+
 ReactDOM.createRoot(
   document.getElementById("root"))
   .render(
