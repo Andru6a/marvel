@@ -1,4 +1,3 @@
-https://marvel-omega-umber.vercel.app/
 https://andru6a.github.io/marvel/
 
 # Getting Started with Create React App
